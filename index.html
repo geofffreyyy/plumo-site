@@ -69,8 +69,11 @@
     html[data-lang="es"] body [lang]:not([lang="es"]) { display: none !important; }
 
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    html { -webkit-text-size-adjust: 100%; }
+    /* Smooth only once the page is open: a link from the app (…#privacy)
+       lands on its section at once. */
+    html.ready { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html.ready { scroll-behavior: auto; } }
     body {
       margin: 0;
       background: var(--bg);
@@ -314,6 +317,9 @@
         });
       }
       show(root.getAttribute('data-lang') || 'en');
+      window.addEventListener('load', function () {
+        setTimeout(function () { root.classList.add('ready'); }, 300);
+      });
     })();
   </script>
 </body>
