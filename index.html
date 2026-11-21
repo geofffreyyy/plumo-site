@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <script>
+    /* Pick the language before first paint: ?lang= > saved choice > browser language. */
+    (function () {
+      var d = document.documentElement, l = null, ok = { en: 1, fr: 1, es: 1 };
+      try { l = new URLSearchParams(location.search).get('lang'); } catch (e) {}
+      if (!ok[l]) { try { l = localStorage.getItem('plumo-lang'); } catch (e) {} }
+      if (!ok[l]) {
+        var n = ((navigator.languages && navigator.languages[0]) || navigator.language || 'en').toLowerCase().slice(0, 2);
+        l = ok[n] ? n : 'en';
+      }
+      d.setAttribute('data-lang', l);
+      d.lang = l;
+    })();
+  </script>
+  <title>Plumo – Photo Cleaner</title>
+  <meta name="description" content="Sort your photos with a swipe and free up space on your iPhone. Help, contact and privacy policy for Plumo.">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#fbf8f1" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#141416" media="(prefers-color-scheme: dark)">
+  <link rel="canonical" href="https://geofffreyyy.github.io/plumo-site/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Plumo – Photo Cleaner">
+  <meta property="og:title" content="Plumo – Photo Cleaner">
+  <meta property="og:description" content="Sort your photos with a swipe and free up space on your iPhone.">
+  <meta property="og:url" content="https://geofffreyyy.github.io/plumo-site/">
+  <meta property="og:image" content="https://geofffreyyy.github.io/plumo-site/assets/icon-512.png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="og:image:alt" content="Plumo app icon">
+  <meta name="twitter:card" content="summary">
+
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/favicon-64.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+  <style>
+    :root {
+      --bg: #fbf8f1;
+      --card: #ffffff;
+      --ink: #141416;
+      --muted: #5d5b57;
+      --line: #e8e2d4;
+      --accent: #ffc24a;
+      --on-accent: #1a1a1f;
+      --link: #8a5a00;
+      color-scheme: light;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #141416;
+        --card: #1e1e21;
+        --ink: #f3f1ec;
+        --muted: #a9a69f;
+        --line: #2e2e32;
+        --link: #ffc24a;
+        color-scheme: dark;
+      }
+    }
+
+    /* Only the chosen language is shown. */
+    html[data-lang="en"] body [lang]:not([lang="en"]),
+    html[data-lang="fr"] body [lang]:not([lang="fr"]),
+    html[data-lang="es"] body [lang]:not([lang="es"]) { display: none !important; }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 17px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+    }
+    a { color: var(--link); text-underline-offset: 2px; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+
+    .skip { position: absolute; left: -999px; }
+    .skip:focus { left: 16px; top: 12px; background: var(--card); padding: 8px 12px; border-radius: 8px; z-index: 10; }
+
+    header.top { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line); }
+    .bar { display: flex; align-items: center; gap: 16px; height: 60px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--ink); text-decoration: none; }
+    .brand img { border-radius: 8px; }
+    nav.links { display: flex; gap: 18px; margin-left: auto; }
+    nav.links a { color: var(--ink); text-decoration: none; font-size: 15px; }
+    nav.links a:hover { text-decoration: underline; }
+    .langs { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .langs button {
+      font: 600 13px/1 inherit; font-family: inherit; color: var(--muted); background: none;
+      border: 0; padding: 7px 9px; cursor: pointer;
+    }
+    .langs button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+    @media (max-width: 520px) { nav.links { display: none; } .langs { margin-left: auto; } }
+
+    .hero { padding: 56px 0 40px; text-align: center; }
+    .hero img { border-radius: 26px; display: block; margin: 0 auto 18px; }
+    .hero h1 { font-size: 40px; line-height: 1.1; margin: 0 0 10px; letter-spacing: -0.02em; }
+    .hero p { color: var(--muted); font-size: 19px; margin: 0 auto 20px; max-width: 30em; }
+    .chip {
+      display: inline-block; font-size: 14px; font-weight: 600;
+      background: var(--accent); color: var(--on-accent); border-radius: 999px; padding: 6px 14px;
+    }
+
+    section { padding: 40px 0; border-top: 1px solid var(--line); scroll-margin-top: 60px; }
+    .eyebrow { text-transform: uppercase; letter-spacing: 0.08em; font-size: 13px; font-weight: 700; color: var(--muted); margin: 0 0 4px; }
+    h2 { font-size: 30px; line-height: 1.2; margin: 0 0 14px; letter-spacing: -0.01em; }
+    h3 { font-size: 18px; margin: 28px 0 6px; }
+    .date { color: var(--muted); font-size: 15px; margin: -6px 0 22px; }
+
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
+    .short { background: var(--accent); color: var(--on-accent); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; }
+    .short p { margin: 0; }
+
+    details { border-bottom: 1px solid var(--line); }
+    details:last-of-type { border-bottom: 0; }
+    summary { cursor: pointer; font-weight: 600; padding: 14px 0; list-style: none; display: flex; gap: 12px; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; margin-left: auto; color: var(--muted); font-weight: 400; }
+    details[open] summary::after { content: "–"; }
+    details > p { margin: 0 0 16px; }
+    .contact { margin: 0 0 22px; }
+
+    footer { border-top: 1px solid var(--line); padding: 28px 0 48px; color: var(--muted); font-size: 14px; }
+    footer p { margin: 4px 0; }
+  </style>
+</head>
+<body id="top">
+  <a class="skip" href="#main"><span lang="en">Skip to content</span><span lang="fr">Aller au contenu</span><span lang="es">Ir al contenido</span></a>
+
+  <header class="top">
+    <div class="wrap bar">
+      <a class="brand" href="#top"><img src="assets/icon-256.png" alt="" width="30" height="30"><span>Plumo</span></a>
+      <nav class="links" aria-label="Sections">
+        <a href="#support"><span lang="en">Help</span><span lang="fr">Aide</span><span lang="es">Ayuda</span></a>
+        <a href="#privacy"><span lang="en">Privacy</span><span lang="fr">Confidentialité</span><span lang="es">Privacidad</span></a>
+      </nav>
+      <div class="langs" role="group" aria-label="Language">
+        <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+        <button type="button" data-set-lang="fr" aria-pressed="false">FR</button>
+        <button type="button" data-set-lang="es" aria-pressed="false">ES</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="wrap hero">
+      <img src="assets/icon-256.png" alt="" width="112" height="112">
+      <h1>Plumo</h1>
+      <p lang="en">Sort your photos with a swipe, and free up space on your iPhone.</p>
+      <p lang="fr">Triez vos photos d’un geste et faites de la place sur votre iPhone.</p>
+      <p lang="es">Ordena tus fotos deslizando y libera espacio en tu iPhone.</p>
+      <span class="chip"><span lang="en">Coming soon to the App Store</span><span lang="fr">Bientôt sur l’App Store</span><span lang="es">Próximamente en el App Store</span></span>
+    </div>
+
+    <!-- ============ HELP ============ -->
+    <section id="support" aria-labelledby="support-title">
+      <div class="wrap">
+        <p class="eyebrow"><span lang="en">Help</span><span lang="fr">Aide</span><span lang="es">Ayuda</span></p>
+        <h2 id="support-title"><span lang="en">Help &amp; contact</span><span lang="fr">Aide et contact</span><span lang="es">Ayuda y contacto</span></h2>
+        <p class="contact" lang="en">A question, a problem, an idea? Email <a href="mailto:supportgeof973@gmail.com">supportgeof973@gmail.com</a>. If something does not work, please mention your iPhone model and iOS version.</p>
+        <p class="contact" lang="fr">Une question, un problème, une idée&nbsp;? Écrivez à <a href="mailto:supportgeof973@gmail.com">supportgeof973@gmail.com</a>. Si quelque chose ne marche pas, précisez votre modèle d’iPhone et votre version d’iOS.</p>
+        <p class="contact" lang="es">¿Una pregunta, un problema, una idea? Escribe a <a href="mailto:supportgeof973@gmail.com">supportgeof973@gmail.com</a>. Si algo no funciona, indica tu modelo de iPhone y tu versión de iOS.</p>
+
+        <div class="card">
+          <details>
+            <summary><span lang="en">How do I cancel or change my subscription?</span><span lang="fr">Comment résilier ou changer mon abonnement&nbsp;?</span><span lang="es">¿Cómo cancelo o cambio mi suscripción?</span></summary>
+            <p lang="en">In Plumo, open Settings › My subscription › Manage my subscription. You can also go to your iPhone’s Settings › your name › Subscriptions. Subscriptions are handled by Apple: cancelling stops the next renewal, and you keep your plan until the end of the period already paid.</p>
+            <p lang="fr">Dans Plumo, ouvrez Réglages › Mon abonnement › Gérer mon abonnement. Vous pouvez aussi passer par les Réglages de l’iPhone › votre nom › Abonnements. Les abonnements sont gérés par Apple&nbsp;: résilier arrête le prochain renouvellement, et vous gardez votre formule jusqu’à la fin de la période déjà payée.</p>
+            <p lang="es">En Plumo, abre Ajustes › Mi suscripción › Gestionar mi suscripción. También puedes ir a Ajustes del iPhone › tu nombre › Suscripciones. Las suscripciones las gestiona Apple: al cancelar se detiene la próxima renovación y conservas tu plan hasta el final del periodo ya pagado.</p>
+          </details>
+          <details>
+            <summary><span lang="en">New iPhone or app reinstalled: how do I get my plan back?</span><span lang="fr">Nouvel iPhone ou app réinstallée&nbsp;: comment retrouver ma formule&nbsp;?</span><span lang="es">iPhone nuevo o app reinstalada: ¿cómo recupero mi plan?</span></summary>
+            <p lang="en">It normally comes back by itself. If it does not, open Settings › See the plans and tap Restore purchases at the bottom of the screen, signed in with the same Apple Account as for the purchase.</p>
+            <p lang="fr">Elle revient normalement toute seule. Sinon, ouvrez Réglages › Voir les formules et touchez Restaurer mes achats en bas de l’écran, avec le même compte Apple que pour l’achat.</p>
+            <p lang="es">Normalmente vuelve sola. Si no, abre Ajustes › Ver los planes y toca Restaurar mis compras al final de la pantalla, con la misma cuenta de Apple que usaste para la compra.</p>
+          </details>
+          <details>
+            <summary><span lang="en">Where do the photos I delete go?</span><span lang="fr">Où vont les photos que je supprime&nbsp;?</span><span lang="es">¿Adónde van las fotos que elimino?</span></summary>
+            <p lang="en">Plumo deletes through the Photos app, and iOS asks you to confirm each time. What you delete stays 30 days in “Recently Deleted” in the Photos app, where you can still recover it. The space is freed once that folder is emptied.</p>
+            <p lang="fr">Plumo supprime en passant par l’app Photos, et iOS vous demande de confirmer à chaque fois. Ce que vous supprimez reste 30 jours dans «&nbsp;Supprimés récemment&nbsp;» de l’app Photos, où vous pouvez encore le récupérer. La place est rendue quand ce dossier est vidé.</p>
+            <p lang="es">Plumo elimina a través de la app Fotos, e iOS te pide confirmación cada vez. Lo que eliminas permanece 30 días en «Eliminado recientemente» de la app Fotos, donde aún puedes recuperarlo. El espacio se libera cuando se vacía esa carpeta.</p>
+          </details>
+          <details>
+            <summary><span lang="en">My photos are in iCloud: does Plumo work?</span><span lang="fr">Mes photos sont dans iCloud&nbsp;: Plumo fonctionne-t-il&nbsp;?</span><span lang="es">Mis fotos están en iCloud: ¿funciona Plumo?</span></summary>
+            <p lang="en">Yes. A photo or video kept only in iCloud is downloaded from your iCloud account when Plumo needs it, for example to show it full size or to save a lighter copy. To also find photos of text among them, turn on Settings › Analyze iCloud photos: Plumo then downloads a preview of each one, on Wi‑Fi.</p>
+            <p lang="fr">Oui. Une photo ou une vidéo gardée seulement dans iCloud est téléchargée depuis votre compte iCloud quand Plumo en a besoin, par exemple pour l’afficher en grand ou pour en enregistrer une copie plus légère. Pour trouver aussi les photos de texte parmi elles, activez Réglages › Analyser les photos iCloud&nbsp;: Plumo télécharge alors un aperçu de chacune, en Wi‑Fi.</p>
+            <p lang="es">Sí. Una foto o un vídeo guardado solo en iCloud se descarga de tu cuenta de iCloud cuando Plumo lo necesita, por ejemplo para verlo en grande o para guardar una copia más ligera. Para encontrar también las fotos de texto entre ellas, activa Ajustes › Analizar las fotos de iCloud: Plumo descarga entonces una vista previa de cada una, con Wi‑Fi.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PRIVACY ============ -->
+    <section id="privacy" aria-labelledby="privacy-title">
+      <div class="wrap">
+        <p class="eyebrow"><span lang="en">Privacy</span><span lang="fr">Confidentialité</span><span lang="es">Privacidad</span></p>
+        <h2 id="privacy-title"><span lang="en">Privacy Policy</span><span lang="fr">Politique de confidentialité</span><span lang="es">Política de privacidad</span></h2>
+        <p class="date"><span lang="en">Effective date: November 21, 2026</span><span lang="fr">En vigueur au 21&nbsp;novembre 2026</span><span lang="es">En vigor desde el 21 de noviembre de 2026</span></p>
+
+        <article class="card">
+          <div class="short">
+            <p lang="en"><strong>In short: your photos never leave your iPhone.</strong> Plumo has no account, no server, no analytics, no ads and no tracking. It collects nothing about you.</p>
+            <p lang="fr"><strong>En bref&nbsp;: vos photos ne quittent jamais votre iPhone.</strong> Plumo n’a ni compte, ni serveur, ni mesure d’audience, ni pub, ni pistage. Il ne collecte rien sur vous.</p>
+            <p lang="es"><strong>En resumen: tus fotos nunca salen de tu iPhone.</strong> Plumo no tiene cuenta, ni servidor, ni analíticas, ni anuncios, ni seguimiento. No recopila nada sobre ti.</p>
+          </div>
+
+          <p lang="en">This policy explains how Plumo – Photo Cleaner (“the app”), developed by Geoffrey Guerin, an independent developer, handles your information.</p>
+          <p lang="fr">Cette politique explique comment Plumo – Photo Cleaner («&nbsp;l’app&nbsp;»), développée par Geoffrey Guerin, développeur indépendant, traite vos informations.</p>
+          <p lang="es">Esta política explica cómo Plumo – Photo Cleaner («la app»), desarrollada por Geoffrey Guerin, desarrollador independiente, trata tu información.</p>
+
+          <h3><span lang="en">Information collected</span><span lang="fr">Données collectées</span><span lang="es">Datos recopilados</span></h3>
+          <p lang="en">None. The app does not collect any personal data, does not send your photos or anything else to me or to any server, does not track you across apps or websites, and does not share or sell anything to anyone.</p>
+          <p lang="fr">Aucune. L’app ne collecte aucune donnée personnelle, n’envoie ni vos photos ni rien d’autre, ni à moi ni à aucun serveur, ne vous suit pas d’une app ou d’un site à l’autre, et ne partage ni ne vend quoi que ce soit à qui que ce soit.</p>
+          <p lang="es">Ninguno. La app no recopila ningún dato personal, no envía tus fotos ni nada más, ni a mí ni a ningún servidor, no te sigue de una app o un sitio web a otro, y no comparte ni vende nada a nadie.</p>
+
+          <h3><span lang="en">Your photos and videos</span><span lang="fr">Vos photos et vidéos</span><span lang="es">Tus fotos y vídeos</span></h3>
+          <p lang="en">Plumo asks for access to your photo library to show you your photos and videos so you can sort them. To find similar photos, screenshots, photos of text or the heaviest files, it looks at them on your iPhone, with tools built into iOS. The results of this analysis and your sorting choices are saved only on your iPhone, in the app’s own storage, and are deleted when you delete the app.</p>
+          <p lang="fr">Plumo demande l’accès à votre photothèque pour vous montrer vos photos et vidéos et vous laisser les trier. Pour trouver les photos similaires, les captures d’écran, les photos de texte ou les fichiers les plus lourds, il les examine sur votre iPhone, avec des outils intégrés à iOS. Les résultats de cette analyse et vos choix de tri sont enregistrés uniquement sur votre iPhone, dans le stockage propre à l’app, et sont effacés quand vous supprimez l’app.</p>
+          <p lang="es">Plumo pide acceso a tu fototeca para mostrarte tus fotos y vídeos y que puedas ordenarlos. Para encontrar fotos parecidas, capturas de pantalla, fotos de texto o los archivos más pesados, las examina en tu iPhone, con herramientas integradas en iOS. Los resultados de este análisis y tus decisiones de orden se guardan solo en tu iPhone, en el almacenamiento propio de la app, y se borran cuando eliminas la app.</p>
+
+          <h3><span lang="en">Changes to your library</span><span lang="fr">Modifications de votre photothèque</span><span lang="es">Cambios en tu fototeca</span></h3>
+          <p lang="en">Plumo only changes your library when you ask it to: deleting items (iOS asks you to confirm), saving lighter copies of photos and videos, and creating albums. These changes are made by the Photos app on your iPhone, and follow your iCloud Photos settings like any other change.</p>
+          <p lang="fr">Plumo ne modifie votre photothèque que lorsque vous le lui demandez&nbsp;: supprimer des éléments (iOS vous demande de confirmer), enregistrer des copies plus légères de photos et de vidéos, créer des albums. Ces modifications sont faites par l’app Photos de votre iPhone et suivent vos réglages Photos iCloud, comme toute autre modification.</p>
+          <p lang="es">Plumo solo cambia tu fototeca cuando se lo pides: eliminar elementos (iOS te pide confirmación), guardar copias más ligeras de fotos y vídeos, y crear álbumes. Estos cambios los hace la app Fotos de tu iPhone y siguen tus ajustes de Fotos en iCloud, como cualquier otro cambio.</p>
+
+          <h3><span lang="en">iCloud Photos</span><span lang="fr">Photos iCloud</span><span lang="es">Fotos en iCloud</span></h3>
+          <p lang="en">If your library uses iCloud Photos, some originals are kept only in iCloud. When Plumo needs one, iOS downloads it from your own iCloud account. This exchange happens between your iPhone and Apple, under <a href="https://www.apple.com/legal/privacy/">Apple’s privacy policy</a>; nothing passes through me.</p>
+          <p lang="fr">Si votre photothèque utilise Photos iCloud, certains originaux ne sont gardés que dans iCloud. Quand Plumo en a besoin, iOS les télécharge depuis votre propre compte iCloud. Cet échange se fait entre votre iPhone et Apple, selon <a href="https://www.apple.com/fr/legal/privacy/">la politique de confidentialité d’Apple</a>&nbsp;; rien ne passe par moi.</p>
+          <p lang="es">Si tu fototeca usa Fotos en iCloud, algunos originales solo se guardan en iCloud. Cuando Plumo los necesita, iOS los descarga de tu propia cuenta de iCloud. Este intercambio se hace entre tu iPhone y Apple, según <a href="https://www.apple.com/es/legal/privacy/">la política de privacidad de Apple</a>; nada pasa por mí.</p>
+
+          <h3><span lang="en">Purchases</span><span lang="fr">Achats</span><span lang="es">Compras</span></h3>
+          <p lang="en">Subscriptions are sold and handled by Apple through the App Store. The app only learns which plan is active and when it renews. It never receives your name, your email address or your payment details.</p>
+          <p lang="fr">Les abonnements sont vendus et gérés par Apple via l’App Store. L’app sait seulement quelle formule est active et quand elle se renouvelle. Elle ne reçoit jamais votre nom, votre adresse e-mail ni vos moyens de paiement.</p>
+          <p lang="es">Las suscripciones las vende y gestiona Apple a través del App Store. La app solo sabe qué plan está activo y cuándo se renueva. Nunca recibe tu nombre, tu correo electrónico ni tus datos de pago.</p>
+
+          <h3><span lang="en">Reminders</span><span lang="fr">Rappels</span><span lang="es">Recordatorios</span></h3>
+          <p lang="en">If you turn on the reminder to sort, the app schedules a notification on your iPhone itself. It is not sent from any server.</p>
+          <p lang="fr">Si vous activez le rappel pour trier, l’app programme une notification sur votre iPhone lui-même. Elle n’est envoyée par aucun serveur.</p>
+          <p lang="es">Si activas el recordatorio para ordenar, la app programa una notificación en tu propio iPhone. No la envía ningún servidor.</p>
+
+          <h3><span lang="en">Sharing</span><span lang="fr">Partage</span><span lang="es">Compartir</span></h3>
+          <p lang="en">The picture you can share after sorting is made on your iPhone. It only goes where you choose to send it, through the iPhone’s share sheet.</p>
+          <p lang="fr">L’image que vous pouvez partager après un tri est créée sur votre iPhone. Elle ne va que là où vous choisissez de l’envoyer, via le menu de partage de l’iPhone.</p>
+          <p lang="es">La imagen que puedes compartir después de ordenar se crea en tu iPhone. Solo va adonde tú decidas enviarla, a través del menú de compartir del iPhone.</p>
+
+          <h3><span lang="en">No analytics, ads or third-party SDKs</span><span lang="fr">Ni mesure d’audience, ni pub, ni SDK tiers</span><span lang="es">Sin analíticas, anuncios ni SDK de terceros</span></h3>
+          <p lang="en">The app contains no analytics, no advertising and no third-party SDKs. If you have chosen to share analytics with app developers in your iPhone’s settings, Apple may provide anonymous crash reports, under Apple’s privacy policy.</p>
+          <p lang="fr">L’app ne contient aucun outil de mesure d’audience, aucune publicité et aucun SDK tiers. Si vous avez choisi de partager les analyses avec les développeurs dans les réglages de votre iPhone, Apple peut transmettre des rapports de plantage anonymes, selon sa propre politique de confidentialité.</p>
+          <p lang="es">La app no contiene analíticas, ni publicidad, ni SDK de terceros. Si has elegido compartir análisis con los desarrolladores en los ajustes de tu iPhone, Apple puede enviar informes de fallos anónimos, según su propia política de privacidad.</p>
+
+          <h3><span lang="en">Children</span><span lang="fr">Enfants</span><span lang="es">Menores</span></h3>
+          <p lang="en">Because the app collects no data at all, it collects no data from children.</p>
+          <p lang="fr">Comme l’app ne collecte aucune donnée, elle n’en collecte aucune auprès des enfants.</p>
+          <p lang="es">Como la app no recopila ningún dato, tampoco recopila datos de menores.</p>
+
+          <h3><span lang="en">This website</span><span lang="fr">Ce site</span><span lang="es">Este sitio web</span></h3>
+          <p lang="en">This website sets no cookies and uses no analytics or trackers. Your language choice is remembered in your browser’s local storage, on your device only. The site is hosted on GitHub Pages; like any web host, GitHub may process technical data such as your IP address to deliver the page.</p>
+          <p lang="fr">Ce site ne dépose aucun cookie et n’utilise ni mesure d’audience ni traceur. Votre choix de langue est mémorisé dans le stockage local de votre navigateur, sur votre appareil uniquement. Le site est hébergé par GitHub Pages&nbsp;; comme tout hébergeur, GitHub peut traiter des données techniques, comme votre adresse IP, pour afficher la page.</p>
+          <p lang="es">Este sitio no instala cookies ni usa analíticas ni rastreadores. Tu elección de idioma se guarda en el almacenamiento local de tu navegador, solo en tu dispositivo. El sitio está alojado en GitHub Pages; como cualquier alojamiento, GitHub puede tratar datos técnicos, como tu dirección IP, para mostrar la página.</p>
+
+          <h3><span lang="en">Changes to this policy</span><span lang="fr">Modifications</span><span lang="es">Cambios</span></h3>
+          <p lang="en">If a future version of the app handles data differently, this policy will be updated on this page, with a new effective date, before that version is released.</p>
+          <p lang="fr">Si une future version de l’app traite les données autrement, cette politique sera mise à jour sur cette page, avec une nouvelle date d’entrée en vigueur, avant la sortie de cette version.</p>
+          <p lang="es">Si una versión futura de la app trata los datos de otra manera, esta política se actualizará en esta página, con una nueva fecha de entrada en vigor, antes de que salga esa versión.</p>
+
+          <h3>Contact</h3>
+          <p lang="en">Questions about privacy? Email <a href="mailto:supportgeof973@gmail.com">supportgeof973@gmail.com</a>.</p>
+          <p lang="fr">Une question sur la confidentialité&nbsp;? Écrivez à <a href="mailto:supportgeof973@gmail.com">supportgeof973@gmail.com</a>.</p>
+          <p lang="es">¿Una pregunta sobre privacidad? Escribe a <a href="mailto:supportgeof973@gmail.com">supportgeof973@gmail.com</a>.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p><span lang="en">© 2026 Geoffrey Guerin. All rights reserved.</span><span lang="fr">© 2026 Geoffrey Guerin. Tous droits réservés.</span><span lang="es">© 2026 Geoffrey Guerin. Todos los derechos reservados.</span></p>
+      <p><span lang="en">Apple, iPhone, iCloud and App Store are trademarks of Apple Inc.</span><span lang="fr">Apple, iPhone, iCloud et App Store sont des marques d’Apple Inc.</span><span lang="es">Apple, iPhone, iCloud y App Store son marcas de Apple Inc.</span></p>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var titles = {
+        en: 'Plumo – Photo Cleaner',
+        fr: 'Plumo – Trier ses photos',
+        es: 'Plumo – Ordenar tus fotos'
+      };
+      var groupLabels = { en: 'Language', fr: 'Langue', es: 'Idioma' };
+      var buttons = document.querySelectorAll('[data-set-lang]');
+
+      function show(lang) {
+        root.setAttribute('data-lang', lang);
+        root.lang = lang;
+        document.title = titles[lang];
+        document.querySelector('.langs').setAttribute('aria-label', groupLabels[lang]);
+        for (var i = 0; i < buttons.length; i++) {
+          buttons[i].setAttribute('aria-pressed', String(buttons[i].getAttribute('data-set-lang') === lang));
+        }
+      }
+
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener('click', function () {
+          var lang = this.getAttribute('data-set-lang');
+          try { localStorage.setItem('plumo-lang', lang); } catch (e) {}
+          show(lang);
+        });
+      }
+      show(root.getAttribute('data-lang') || 'en');
+    })();
+  </script>
+</body>
+</html>
